@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "732039550142",
+    "firebase_url": "https://hobbits-database-default-rtdb.firebaseio.com",
+    "project_id": "hobbits-database",
+    "storage_bucket": "hobbits-database.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732039550142:android:15133750fe8c99abcc7aef",
+        "android_client_info": {
+          "package_name": "com.shiretech.hobbits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732039550142-nmtnr3icmci0mqg7tbjjooefaiqnaprb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACSMUQYj9YRSa7IIGv1lNgx7dONd3eGy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732039550142-i83cbq00d47k15j2bt40jqqot1f4ccgn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

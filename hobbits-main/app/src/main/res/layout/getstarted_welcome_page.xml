@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bgcolor">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <ImageView
+        android:id="@+id/gslogo"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:src="@drawable/getstarted_logo"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="22dp">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/welcometext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome!"
+        android:textSize="20sp"
+        android:textColor="#205375"
+        android:textAlignment="center"
+        android:fontFamily="@font/inter_light"
+        android:textFontWeight="1000"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gslogo"
+        android:layout_marginTop="-70dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/NaviDot"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcometext"
+       android:layout_marginTop="109dp">
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_height="25dp"
+            android:id="@+id/Dot1"
+            android:src="@drawable/dot_active"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_height="25dp"
+            android:id="@+id/Dot2"
+            android:src="@drawable/dot_inactive"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_height="25dp"
+            android:id="@+id/Dot3"
+            android:src="@drawable/dot_inactive"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/Nextbutton"
+        android:layout_width="295dp"
+        android:layout_height="41dp"
+        android:text="Next"
+        android:textSize="14sp"
+        android:textColor="#FDF8F0"
+        android:backgroundTint="#D7942E"
+        android:layout_centerHorizontal="true"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/NaviDot"
+        android:layout_marginTop="50dp">
+    </Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
