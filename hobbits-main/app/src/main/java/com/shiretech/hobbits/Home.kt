@@ -388,7 +388,9 @@ class Home : AppCompatActivity() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["Authorization"] = "Bearer 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"
+                headers["HTTP-Referer"] = "https://github.com/ShireTech" // Replace with your app's domain
+                headers["X-Title"] = "Hobbits App"
+                headers["Authorization"] = "Bearer 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"
                 headers["Content-Type"] = "application/json"
                 return headers
             }
