@@ -41,7 +41,7 @@ class User_Profile : AppCompatActivity() {
 
         profileImage = findViewById(R.id.ProfileImage)
 
-        val UnselectedHomeImageClick = findViewById<ImageView>(R.id.ClickHome)
+        val UnselectedHomeImageClick = findViewById<ImageView>(R.id.ClickUnselectedHome)
         UnselectedHomeImageClick.setOnClickListener {
             val intent = Intent(this, Home::class.java)
             startActivity(intent)

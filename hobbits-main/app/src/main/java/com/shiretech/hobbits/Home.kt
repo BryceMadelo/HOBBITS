@@ -60,7 +60,7 @@ class Home : AppCompatActivity() {
         // Initialize all views first
         val textViewWelcome = findViewById<TextView>(R.id.TextViewWelcome)
         val textViewTime = findViewById<TextView>(R.id.TimeAssignedForHobby0)
-        val chatButton = findViewById<ImageView>(R.id.ClickChat)
+        val chatButton = findViewById<ImageView>(R.id.ClickUnselectedChat)
         val chatbotContainer = findViewById<View>(R.id.chatbotContainer)
         val mainContent = findViewById<ScrollView>(R.id.mainContent)
         chatRecyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
@@ -78,7 +78,7 @@ class Home : AppCompatActivity() {
         }
 
         // Chat button click listener
-        chatButton.setOnClickListener {
+        /*chatButton.setOnClickListener {
             if (chatbotContainer.visibility == View.VISIBLE) {
                 chatbotContainer.visibility = View.GONE
                 mainContent.visibility = View.VISIBLE
@@ -86,7 +86,30 @@ class Home : AppCompatActivity() {
                 chatbotContainer.visibility = View.VISIBLE
                 mainContent.visibility = View.GONE
             }
+        }*/
+
+        // Chat button click listener
+        chatButton.setOnClickListener {
+            val HomeUnselected = findViewById<ImageView>(R.id.ClickHome)
+            val ChatSelected = findViewById<ImageView>(R.id.ClickUnselectedChat)
+
+            if (chatbotContainer.visibility == View.VISIBLE) {
+                chatbotContainer.visibility = View.GONE
+                mainContent.visibility = View.VISIBLE
+
+                // Revert to default images
+                HomeUnselected.setImageResource(R.drawable.home_unselected)
+                ChatSelected.setImageResource(R.drawable.chat)
+            } else {
+                chatbotContainer.visibility = View.VISIBLE
+                mainContent.visibility = View.GONE
+
+                // Change to selected/deselected state
+                HomeUnselected.setImageResource(R.drawable.home_unselected) // or home_deselected if you have one
+                ChatSelected.setImageResource(R.drawable.chat_clicked)
+            }
         }
+
 
         // Send button click listener
         sendButton.setOnClickListener {
@@ -105,7 +128,7 @@ class Home : AppCompatActivity() {
             }
         }
 
-        // Rest of your existing initialization code...
+        // User
         val currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         if (currentUser != null) {

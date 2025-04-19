@@ -226,7 +226,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
     <ImageView
-        android:id="@+id/ClickHome"
+        android:id="@+id/ClickUnselectedHome"
         android:layout_width="41dp"
         android:layout_height="41dp"
         android:src="@drawable/home_unselected"
@@ -238,6 +238,7 @@
         app:layout_constraintBottom_toBottomOf="@id/botrectangle"
         android:layout_marginStart="45dp"
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
     <ImageView
         android:id="@+id/ClickUnselectedCategories"
         android:layout_width="41dp"
@@ -245,19 +246,31 @@
         android:src="@drawable/categories_unselected"
         android:contentDescription="Categories page"
         android:clickable="true"
-        app:layout_constraintStart_toEndOf="@id/ClickHome"
-        app:layout_constraintEnd_toStartOf="@id/ClickUnselectedUser"
+        app:layout_constraintStart_toEndOf="@id/ClickUnselectedHome"
+        app:layout_constraintEnd_toStartOf="@id/ClickselectedUser"
         app:layout_constraintTop_toTopOf="@id/botrectangle"
         app:layout_constraintBottom_toBottomOf="@id/botrectangle"
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
     <ImageView
-        android:id="@+id/ClickUnselectedUser"
+        android:id="@+id/ClickselectedUser"
         android:layout_width="41dp"
         android:layout_height="41dp"
         android:src="@drawable/user_selected"
         android:contentDescription="User page"
         android:clickable="true"
         app:layout_constraintStart_toEndOf="@id/ClickUnselectedCategories"
+        app:layout_constraintEnd_toStartOf="@id/ClickUnselectedChat"
+        app:layout_constraintTop_toTopOf="@id/botrectangle"
+        app:layout_constraintBottom_toBottomOf="@id/botrectangle"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+    <ImageView
+        android:id="@+id/ClickUnselectedChat"
+        android:layout_width="41dp"
+        android:layout_height="41dp"
+        android:src="@drawable/chat"
+        android:contentDescription="Chat with AI"
+        android:clickable="true"
+        app:layout_constraintStart_toEndOf="@id/ClickselectedUser"
         app:layout_constraintEnd_toEndOf="@id/botrectangle"
         app:layout_constraintTop_toTopOf="@id/botrectangle"
         app:layout_constraintBottom_toBottomOf="@id/botrectangle"
