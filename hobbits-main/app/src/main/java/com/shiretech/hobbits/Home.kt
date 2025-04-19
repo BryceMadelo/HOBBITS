@@ -390,7 +390,7 @@ class Home : AppCompatActivity() {
                 val headers = HashMap<String, String>()
                 headers["HTTP-Referer"] = "https://github.com/ShireTech" // Replace with your app's domain
                 headers["X-Title"] = "Hobbits App"
-                headers["Authorization"] = "Bearer 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"
+                headers["Authorization"] = "Bearer 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"
                 headers["Content-Type"] = "application/json"
                 return headers
             }
