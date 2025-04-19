@@ -18,6 +18,20 @@ import com.google.firebase.database.ValueEventListener
 import java.text.DateFormatSymbols
 import java.util.Calendar
 import java.util.*
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
+import android.widget.ScrollView
+import org.json.JSONArray
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.RetryPolicy
 
 class Home : AppCompatActivity() {
 
@@ -27,8 +41,12 @@ class Home : AppCompatActivity() {
     private lateinit var monthYearTextView: TextView
     private lateinit var displayTimeView: TextView
     private lateinit var dateAssignedTextView: TextView
-
-
+    private lateinit var chatRecyclerView: RecyclerView
+    private lateinit var chatInput: EditText
+    private lateinit var sendButton: ImageButton
+    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var requestQueue: RequestQueue
+    private val messages = mutableListOf<ChatMessage>()
 
     private var currentMonth: Int = 0
     private var currentYear: Int = 0
@@ -39,9 +57,55 @@ class Home : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_page)
 
+        // Initialize all views first
         val textViewWelcome = findViewById<TextView>(R.id.TextViewWelcome)
         val textViewTime = findViewById<TextView>(R.id.TimeAssignedForHobby0)
+        val chatButton = findViewById<ImageView>(R.id.ClickChat)
+        val chatbotContainer = findViewById<View>(R.id.chatbotContainer)
+        val mainContent = findViewById<ScrollView>(R.id.mainContent)
+        chatRecyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
+        chatInput = findViewById<EditText>(R.id.chatInput)
+        sendButton = findViewById<ImageButton>(R.id.sendButton)
 
+        // Initialize Volley
+        requestQueue = Volley.newRequestQueue(this)
+
+        // Setup RecyclerView
+        chatAdapter = ChatAdapter(messages)
+        chatRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@Home)
+            adapter = chatAdapter
+        }
+
+        // Chat button click listener
+        chatButton.setOnClickListener {
+            if (chatbotContainer.visibility == View.VISIBLE) {
+                chatbotContainer.visibility = View.GONE
+                mainContent.visibility = View.VISIBLE
+            } else {
+                chatbotContainer.visibility = View.VISIBLE
+                mainContent.visibility = View.GONE
+            }
+        }
+
+        // Send button click listener
+        sendButton.setOnClickListener {
+            val message = chatInput.text.toString().trim()
+            if (message.isNotEmpty()) {
+                // Add user message to chat
+                messages.add(ChatMessage(message, true))
+                chatAdapter.notifyItemInserted(messages.size - 1)
+                chatInput.text.clear()
+
+                // Scroll to bottom
+                chatRecyclerView.scrollToPosition(messages.size - 1)
+
+                // Send message to Deepseek API
+                sendMessageToDeepseek(message)
+            }
+        }
+
+        // Rest of your existing initialization code...
         val currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         if (currentUser != null) {
@@ -211,7 +275,6 @@ class Home : AppCompatActivity() {
             val daysString = selectedDays.joinToString(" ")
             dateAssignedTextView.text = daysString
         }
-
     }
 
     private fun updateMonthAndYearTextView() {
@@ -234,6 +297,114 @@ class Home : AppCompatActivity() {
         previousCalendar.set(Calendar.YEAR, currentYear)
         previousCalendar.add(Calendar.MONTH, -1)
         return previousCalendar
+    }
+
+    private fun sendMessageToDeepseek(message: String) {
+        val url = "https://openrouter.ai/api/v1/chat/completions"
+        val jsonBody = JSONObject().apply {
+            put("model", "deepseek/deepseek-r1:free")
+            put("messages", JSONArray().apply {
+                put(JSONObject().apply {
+                    put("role", "user")
+                    put("content", message)
+                })
+            })
+        }
+
+        // Log the request
+        Log.d("ChatAPI", "Sending request: ${jsonBody.toString()}")
+
+        val request = object : JsonObjectRequest(
+            Request.Method.POST, url, jsonBody,
+            { response ->
+                try {
+                    // Log the response
+                    Log.d("ChatAPI", "Received response: ${response.toString()}")
+
+                    // Show a loading message while processing
+                    runOnUiThread {
+                        messages.add(ChatMessage("Thinking...", false))
+                        chatAdapter.notifyItemInserted(messages.size - 1)
+                        chatRecyclerView.scrollToPosition(messages.size - 1)
+                    }
+
+                    // Parse the response
+                    val choices = response.getJSONArray("choices")
+                    Log.d("ChatAPI", "Choices array: ${choices.toString()}")
+
+                    val firstChoice = choices.getJSONObject(0)
+                    Log.d("ChatAPI", "First choice: ${firstChoice.toString()}")
+
+                    val messageObj = firstChoice.getJSONObject("message")
+                    Log.d("ChatAPI", "Message object: ${messageObj.toString()}")
+
+                    val aiResponse = messageObj.getString("content")
+                    Log.d("ChatAPI", "AI Response: $aiResponse")
+
+                    // Update UI on the main thread
+                    runOnUiThread {
+                        // Remove the loading message
+                        if (messages.isNotEmpty() && messages.last().message == "Thinking...") {
+                            messages.removeAt(messages.size - 1)
+                            chatAdapter.notifyItemRemoved(messages.size)
+                        }
+
+                        // Add AI response to chat
+                        messages.add(ChatMessage(aiResponse, false))
+                        chatAdapter.notifyItemInserted(messages.size - 1)
+                        chatRecyclerView.scrollToPosition(messages.size - 1)
+                    }
+                } catch (e: Exception) {
+                    Log.e("ChatAPI", "Error parsing response", e)
+                    e.printStackTrace()
+                    
+                    runOnUiThread {
+                        // Remove the loading message if it exists
+                        if (messages.isNotEmpty() && messages.last().message == "Thinking...") {
+                            messages.removeAt(messages.size - 1)
+                            chatAdapter.notifyItemRemoved(messages.size)
+                        }
+                        messages.add(ChatMessage("Sorry, I couldn't process the response. Please try again.", false))
+                        chatAdapter.notifyItemInserted(messages.size - 1)
+                        chatRecyclerView.scrollToPosition(messages.size - 1)
+                    }
+                }
+            },
+            { error ->
+                Log.e("ChatAPI", "Network error", error)
+                error.printStackTrace()
+                
+                runOnUiThread {
+                    // Remove the loading message if it exists
+                    if (messages.isNotEmpty() && messages.last().message == "Thinking...") {
+                        messages.removeAt(messages.size - 1)
+                        chatAdapter.notifyItemRemoved(messages.size)
+                    }
+                    messages.add(ChatMessage("Sorry, I couldn't process your request. Please try again.", false))
+                    chatAdapter.notifyItemInserted(messages.size - 1)
+                    chatRecyclerView.scrollToPosition(messages.size - 1)
+                }
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["HTTP-Referer"] = "https://github.com/ShireTech" // Replace with your app's domain
+                headers["X-Title"] = "Hobbits App"
+                headers["Authorization"] = "Bearer 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"
+                headers["Content-Type"] = "application/json"
+                return headers
+            }
+
+            override fun getRetryPolicy(): RetryPolicy {
+                return DefaultRetryPolicy(
+                    30000, // 30 seconds timeout
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                )
+            }
+        }
+
+        requestQueue.add(request)
     }
 }
 
